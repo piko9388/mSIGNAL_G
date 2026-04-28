@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>누적관리 · m-SIGNAL</title>
+<meta name="description" content="m-SIGNAL 누적 데이터 분석 — BP·소재군·키워드 트렌드 (Phase 2 개발 예정)">
+<style>
+:root {
+  --orange: #F36F21;
+  --orange-deep: #D95D1F;
+  --text-primary: #1a1a1a;
+  --text-secondary: #5A6472;
+  --text-tertiary: #9CA3AF;
+  --border: #E5E7EB;
+  --bg-white: #FFFFFF;
+  --bg-subtle: #F9FAFB;
+  --navy: #1F2937;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, 'Malgun Gothic', sans-serif;
+  font-size: 15px; line-height: 1.6;
+  color: var(--text-primary); background: var(--bg-white);
+  word-break: keep-all;
+}
+
+/* m-SIGNAL Unified Top Nav */
+.msig-topnav { position: sticky; top: 0; z-index: 999; background: rgba(255,255,255,0.96); border-bottom: 1px solid var(--border); backdrop-filter: blur(10px); }
+.msig-topnav-inner { max-width: 1280px; margin: 0 auto; padding: 12px 24px; display: flex; align-items: center; gap: 32px; }
+.msig-topnav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text-primary); flex-shrink: 0; }
+.msig-topnav-logo img { height: 24px; display: block; }
+.msig-topnav-logo .name { font-size: 16px; font-weight: 800; letter-spacing: -0.3px; }
+.msig-topnav-logo .name .ac { color: var(--orange-deep); }
+.msig-topnav-menu { display: flex; gap: 4px; align-items: center; }
+.msig-topnav-link { padding: 8px 16px; font-size: 13px; font-weight: 600; color: var(--text-secondary); text-decoration: none; border-radius: 6px; transition: all 0.15s ease; display: flex; align-items: center; gap: 6px; letter-spacing: -0.2px; }
+.msig-topnav-link:hover { background: var(--bg-subtle); color: var(--text-primary); }
+.msig-topnav-link.active { background: #FFF7ED; color: var(--orange-deep); }
+.msig-topnav-link.active::before { content: ""; width: 4px; height: 4px; background: var(--orange-deep); border-radius: 50%; }
+.msig-soon { font-size: 9px; font-weight: 700; background: #E5E7EB; color: #6B7280; padding: 2px 6px; border-radius: 3px; letter-spacing: 0.5px; font-family: 'SF Mono','Consolas',monospace; }
+.msig-topnav-meta { margin-left: auto; display: flex; flex-direction: column; align-items: flex-end; gap: 2px; }
+.msig-topnav-meta .tag { background: var(--navy); color: #fff; padding: 3px 10px; border-radius: 3px; font-size: 9px; font-weight: 700; letter-spacing: 1.2px; font-family: 'SF Mono','Consolas',monospace; }
+.msig-topnav-meta .ver { font-size: 10px; color: var(--text-tertiary); font-family: 'SF Mono','Consolas',monospace; }
+@media (max-width: 768px) {
+  .msig-topnav-inner { padding: 10px 14px; gap: 12px; flex-wrap: wrap; }
+  .msig-topnav-logo .name { font-size: 14px; }
+  .msig-topnav-link { padding: 6px 10px; font-size: 12px; }
+  .msig-topnav-meta { display: none; }
+}
+@media print { .msig-topnav { display: none !important; } }
+
+/* Hero */
+.hero { max-width: 1100px; margin: 0 auto; padding: 64px 24px 40px; }
+.hero-tag { font-family: 'SF Mono','Consolas',monospace; font-size: 12px; color: var(--text-tertiary); letter-spacing: 1.2px; font-weight: 700; margin-bottom: 12px; }
+.hero-tag .ww { color: var(--orange-deep); margin-right: 10px; }
+.hero-title { font-size: 48px; font-weight: 900; letter-spacing: -1.5px; line-height: 1.1; margin-bottom: 14px; }
+.hero-title .accent { color: var(--orange-deep); }
+.hero-sub { font-size: 16px; color: var(--text-secondary); max-width: 680px; line-height: 1.65; }
+.hero-soon-badge { display: inline-block; background: var(--navy); color: #fff; padding: 6px 14px; border-radius: 4px; font-size: 11px; font-weight: 700; letter-spacing: 1.5px; font-family: 'SF Mono','Consolas',monospace; margin-bottom: 18px; }
+
+/* Section */
+.section { max-width: 1100px; margin: 0 auto; padding: 32px 24px; }
+h2 { font-size: 22px; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 18px; padding-left: 14px; position: relative; }
+h2::before { content: ""; position: absolute; left: 0; top: 6px; bottom: 6px; width: 3px; background: var(--orange-deep); border-radius: 2px; }
+h2 .h2-num { font-family: 'SF Mono','Consolas',monospace; color: var(--text-tertiary); font-weight: 700; margin-right: 10px; font-size: 18px; }
+
+/* Roadmap cards */
+.roadmap-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; margin-top: 8px; }
+.roadmap-card { padding: 22px 22px 20px; background: var(--bg-white); border: 1px solid var(--border); border-radius: 8px; transition: all 0.2s ease; position: relative; }
+.roadmap-card:hover { border-color: var(--orange-deep); box-shadow: 0 4px 14px rgba(243,111,33,0.08); }
+.roadmap-phase { font-family: 'SF Mono','Consolas',monospace; font-size: 11px; font-weight: 700; color: var(--orange-deep); letter-spacing: 1px; margin-bottom: 6px; }
+.roadmap-title { font-size: 16px; font-weight: 700; margin-bottom: 8px; letter-spacing: -0.3px; }
+.roadmap-desc { font-size: 13px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 12px; }
+.roadmap-eta { font-family: 'SF Mono','Consolas',monospace; font-size: 11px; color: var(--text-tertiary); padding-top: 10px; border-top: 1px dashed var(--border); }
+.roadmap-eta b { color: var(--navy); }
+
+/* Capability list */
+.cap-list { background: var(--bg-subtle); border-left: 3px solid var(--navy); border-radius: 0 6px 6px 0; padding: 22px 24px; margin-top: 12px; }
+.cap-list h3 { font-size: 14px; font-weight: 700; margin-bottom: 12px; }
+.cap-row { display: flex; align-items: flex-start; gap: 12px; padding: 8px 0; font-size: 13.5px; line-height: 1.6; border-bottom: 1px dashed #D1D5DB; }
+.cap-row:last-child { border-bottom: 0; }
+.cap-row .ico { flex-shrink: 0; width: 22px; font-size: 14px; }
+.cap-row b { color: var(--navy); }
+.cap-row code { background: #fff; border: 1px solid var(--border); padding: 1px 6px; border-radius: 3px; font-family: 'SF Mono','Consolas',monospace; font-size: 11.5px; color: #BE185D; }
+
+/* Footer */
+footer { border-top: 1px solid var(--border); padding: 32px 24px 40px; margin-top: 48px; background: var(--bg-subtle); }
+.footer-inner { max-width: 1100px; margin: 0 auto; display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+.footer-text { font-size: 12px; color: var(--text-tertiary); line-height: 1.6; }
+.footer-contact { font-family: 'SF Mono','Consolas',monospace; font-size: 12px; color: var(--text-secondary); text-align: right; line-height: 1.7; }
+.footer-contact strong { color: var(--text-primary); font-size: 13px; font-family: 'Noto Sans KR',sans-serif; font-weight: 700; }
+
+@media (max-width: 768px) {
+  .hero { padding: 40px 16px 28px; }
+  .hero-title { font-size: 34px; letter-spacing: -1px; }
+  .section { padding: 24px 16px; }
+}
+</style>
+</head>
+<body>
+
+<!-- m-SIGNAL Unified Top Nav -->
+<nav class="msig-topnav">
+  <div class="msig-topnav-inner">
+    <a href="index.html" class="msig-topnav-logo">
+      <img src="assets/logo.png" alt="SK hynix"/>
+      <span class="name">m-<span class="ac">SIGNAL</span></span>
+    </a>
+    <div class="msig-topnav-menu">
+      <a href="crawler/index.html" class="msig-topnav-link">크롤링</a>
+      <a href="overview.html" class="msig-topnav-link">OVERVIEW</a>
+      <a href="index.html" class="msig-topnav-link">보고서</a>
+      <a href="trend.html" class="msig-topnav-link active">누적관리 <span class="msig-soon">SOON</span></a>
+    </div>
+    <div class="msig-topnav-meta">
+      <span class="tag">INTERNAL</span>
+      <span class="ver">v2.1.1 · Gemini Ready · 이정훈 TL</span>
+    </div>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <span class="hero-soon-badge">PHASE 2 · COMING SOON</span>
+  <div class="hero-tag">
+    <span class="ww">CUMULATIVE</span>
+    <span>Long-term Trend Analysis</span>
+  </div>
+  <div class="hero-title">누적<span class="accent">관리</span></div>
+  <div class="hero-sub">
+    매주 발행되는 Weekly Report를 정형 JSON으로 누적 저장하고, 시간이 흐를수록 의미 있는 트렌드·순위·예측 데이터로 진화시키는 영역입니다. Weekly가 5건 이상 누적되는 시점부터 본격 활성화됩니다.
+  </div>
+</section>
+
+<!-- 1. 활용 시나리오 -->
+<section class="section">
+  <h2><span class="h2-num">01</span>활용 시나리오</h2>
+  <div class="cap-list">
+    <h3>📊 누적 데이터로 가능해지는 분석</h3>
+    <div class="cap-row">
+      <span class="ico">①</span>
+      <div><b>BP 언급 빈도 누적 랭킹</b> — 어떤 BP가 시장에서 가장 활발히 움직이는가. 분기별·반기별 Top 20 자동 산출</div>
+    </div>
+    <div class="cap-row">
+      <span class="ico">②</span>
+      <div><b>소재군별 Signal 강도 추이</b> — Photo·Chemical·CMP·Gas·Precursor·Wafer·Target별 시계열. 특정 소재군 급증 시 공급망 위기 조기 감지</div>
+    </div>
+    <div class="cap-row">
+      <span class="ico">③</span>
+      <div><b>신뢰도 분포 변화</b> — <code>● 공식 / ◐ 업계 / ○ 추정</code> 비중 추이. ○ 비중 상승 = 정보 부정확·확인 부족 시그널</div>
+    </div>
+    <div class="cap-row">
+      <span class="ico">④</span>
+      <div><b>키워드 동시발생 네트워크</b> — co-occurrence 매트릭스. HBM4E ↔ 1c나노 ↔ 후공정 같은 클러스터 자동 추출</div>
+    </div>
+    <div class="cap-row">
+      <span class="ico">⑤</span>
+      <div><b>Key Signal 회수율 추적</b> — 주차별 임팩트 강도 비교. 시장이 조용했던 주 vs 격동의 주 정량 구분</div>
+    </div>
+    <div class="cap-row">
+      <span class="ico">⑥</span>
+      <div><b>BP × 카테고리 히트맵</b> — pivot table 자동 생성. 특정 BP의 카테고리 편중도 확인</div>
+    </div>
+    <div class="cap-row">
+      <span class="ico">⑦</span>
+      <div><b>계절성 패턴</b> — 분기별 Signal 분포. 실적 발표 시즌·CES·SEMICON 영향도 정량화</div>
+    </div>
+  </div>
+</section>
+
+<!-- 2. 개발 로드맵 -->
+<section class="section">
+  <h2><span class="h2-num">02</span>개발 로드맵</h2>
+  <div class="roadmap-grid">
+    <div class="roadmap-card">
+      <div class="roadmap-phase">PHASE 2A · 데이터 정형화</div>
+      <div class="roadmap-title">JSON 백필 & 스키마 확정</div>
+      <div class="roadmap-desc">기존 Weekly Report(WW17~)를 정형 JSON으로 변환. <code>data/WW{NN}.json</code> 구조 확정 및 백필 완료.</div>
+      <div class="roadmap-eta">ETA · <b>WW18 발행 전</b></div>
+    </div>
+    <div class="roadmap-card">
+      <div class="roadmap-phase">PHASE 2B · 발행 자동화</div>
+      <div class="roadmap-title">JSON → HTML 빌드</div>
+      <div class="roadmap-desc">Weekly 발행 시 HTML과 JSON을 동시 생성하는 빌드 스크립트. <code>data/index.json</code> 인덱스 자동 갱신.</div>
+      <div class="roadmap-eta">ETA · <b>WW20 발행 시점</b></div>
+    </div>
+    <div class="roadmap-card">
+      <div class="roadmap-phase">PHASE 2C · 누적 분석 대시보드</div>
+      <div class="roadmap-title">Trend Dashboard</div>
+      <div class="roadmap-desc">BP Top 20 랭킹·소재군 시계열·신뢰도 도넛·워드클라우드·Key Signal 타임라인. Vanilla JS + D3.js.</div>
+      <div class="roadmap-eta">ETA · <b>WW22 시점 (5주차 누적)</b></div>
+    </div>
+    <div class="roadmap-card">
+      <div class="roadmap-phase">PHASE 3 · 사내 분석 통합</div>
+      <div class="roadmap-title">분기 종합 리포트</div>
+      <div class="roadmap-desc">13주분 JSON을 통합한 분기 트렌드 보고서 자동 발행. 사내 평가 결과와의 상관관계 분석.</div>
+      <div class="roadmap-eta">ETA · <b>26년 2분기말</b></div>
+    </div>
+  </div>
+</section>
+
+<!-- 3. 보안 -->
+<section class="section">
+  <h2><span class="h2-num">03</span>보안 원칙</h2>
+  <div class="cap-list" style="border-left-color:var(--orange-deep)">
+    <h3>🔒 데이터 분리 보관</h3>
+    <div class="cap-row">
+      <span class="ico">📂</span>
+      <div><b>Public</b> (현재 GitHub Pages) — 발행물(HTML) + 정형 JSON. 외부 인용 가능한 공개 정보만 포함.</div>
+    </div>
+    <div class="cap-row">
+      <span class="ico">🔐</span>
+      <div><b>Private</b> (사내 별도 보관) — BP 가중치·자사 관심 키워드 사전·내부 평가 매핑. 사내 Confluence·Wiki·로컬 저장 한정.</div>
+    </div>
+    <div class="cap-row">
+      <span class="ico">⚠️</span>
+      <div>누적 트렌드·BP 순위 데이터는 사내자산 — 사외 블로그·외부 플랫폼 절대 업로드 금지.</div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-text">
+      m-SIGNAL v2.1.1 · Materials Signal Intelligence<br>
+      SK hynix 소재전략 · 내부용 · 무단 외부 공유 금지
+    </div>
+    <div class="footer-contact">
+      <strong>이정훈 TL</strong><br>
+      010-3376-7923<br>
+      junghoon12.lee@sk.com
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

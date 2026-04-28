@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>m-SIGNAL · Materials Signal Intelligence</title>
+<meta name="description" content="SK hynix 소재전략팀 전용 인텔리전스 시스템 - 소재 시장 동향 · 기술 변곡점 · BP 활동 자동 수집 · 분석 · 보고서화">
+<style>
+:root {
+  --orange: #F36F21;
+  --orange-deep: #D95D1F;
+  --text-primary: #1a1a1a;
+  --text-secondary: #5A6472;
+  --text-tertiary: #9CA3AF;
+  --border: #E5E7EB;
+  --border-dark: #D1D5DB;
+  --bg-white: #FFFFFF;
+  --bg-subtle: #F9FAFB;
+  --bg-accent: #F3F4F6;
+  --navy: #1F2937;
+  --signal-high: #047857;
+  --signal-mid: #B45309;
+  --signal-low: #C8001A;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Malgun Gothic', sans-serif;
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--text-primary);
+  background: var(--bg-white);
+  letter-spacing: 0;
+  word-break: keep-all;
+  font-feature-settings: "kern" 1;
+}
+.mono {
+  font-family: 'SF Mono', 'Monaco', 'Consolas', 'Courier New', monospace;
+  letter-spacing: 0;
+}
+
+/* ========== m-SIGNAL 통합 상단 네비 (v2.1.1) ========== */
+.msig-topnav {
+  position: sticky; top: 0; z-index: 999;
+  background: rgba(255,255,255,0.96);
+  border-bottom: 1px solid var(--border);
+  backdrop-filter: blur(10px);
+}
+.msig-topnav-inner {
+  max-width: 1280px; margin: 0 auto;
+  padding: 12px 24px;
+  display: flex; align-items: center; gap: 32px;
+}
+.msig-topnav-logo {
+  display: flex; align-items: center; gap: 10px;
+  text-decoration: none; color: var(--text-primary);
+  flex-shrink: 0;
+}
+.msig-topnav-logo img { height: 24px; display: block; }
+.msig-topnav-logo .name {
+  font-size: 16px; font-weight: 800; letter-spacing: -0.3px;
+}
+.msig-topnav-logo .name .ac { color: var(--orange-deep); }
+.msig-topnav-menu {
+  display: flex; gap: 4px; align-items: center;
+}
+.msig-topnav-link {
+  padding: 8px 16px;
+  font-size: 13px; font-weight: 600;
+  color: var(--text-secondary); text-decoration: none;
+  border-radius: 6px;
+  transition: all 0.15s ease;
+  display: flex; align-items: center; gap: 6px;
+  letter-spacing: -0.2px;
+}
+.msig-topnav-link:hover { background: var(--bg-subtle); color: var(--text-primary); }
+.msig-topnav-link.active { background: #FFF7ED; color: var(--orange-deep); }
+.msig-topnav-link.active::before {
+  content: ""; width: 4px; height: 4px;
+  background: var(--orange-deep); border-radius: 50%;
+}
+.msig-soon {
+  font-size: 9px; font-weight: 700;
+  background: #E5E7EB; color: #6B7280;
+  padding: 2px 6px; border-radius: 3px;
+  letter-spacing: 0.5px; font-family: 'SF Mono', 'Consolas', monospace;
+}
+.msig-topnav-meta {
+  margin-left: auto;
+  display: flex; flex-direction: column; align-items: flex-end; gap: 2px;
+}
+.msig-topnav-meta .tag {
+  background: var(--navy); color: #fff;
+  padding: 3px 10px; border-radius: 3px;
+  font-size: 9px; font-weight: 700; letter-spacing: 1.2px;
+  font-family: 'SF Mono', 'Consolas', monospace;
+}
+.msig-topnav-meta .ver {
+  font-size: 10px; color: var(--text-tertiary);
+  font-family: 'SF Mono', 'Consolas', monospace;
+}
+@media (max-width: 768px) {
+  .msig-topnav-inner { padding: 10px 14px; gap: 12px; flex-wrap: wrap; }
+  .msig-topnav-logo .name { font-size: 14px; }
+  .msig-topnav-link { padding: 6px 10px; font-size: 12px; }
+  .msig-topnav-meta { display: none; }
+}
+@media print { .msig-topnav { display: none !important; } }
+
+/* ========== Top Bar ========== */
+.top-bar {
+  position: sticky;
+  top: 0;
+  background: var(--bg-white);
+  border-bottom: 1px solid var(--border);
+  z-index: 100;
+  backdrop-filter: blur(10px);
+  background: rgba(255,255,255,0.95);
+}
+.top-bar-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 14px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.top-logo img { height: 26px; display: block; }
+.top-meta {
+  font-family: 'SF Mono', 'Consolas', monospace;
+  font-size: 12px;
+  color: var(--text-secondary);
+  text-align: right;
+  line-height: 1.6;
+}
+.top-meta .tag {
+  display: inline-block;
+  background: var(--navy);
+  color: #fff;
+  padding: 3px 10px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  border-radius: 3px;
+  margin-bottom: 3px;
+}
+
+/* ========== Hero ========== */
+.hero {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 48px 24px 32px 24px;
+  border-bottom: 2px solid var(--text-primary);
+}
+.hero-tag {
+  font-family: 'SF Mono', 'Consolas', monospace;
+  font-size: 12px;
+  color: var(--text-tertiary);
+  letter-spacing: 1.2px;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+.hero-tag .ww { color: var(--orange-deep); margin-right: 10px; }
+.hero-title {
+  font-size: 56px;
+  font-weight: 900;
+  color: var(--text-primary);
+  letter-spacing: -2px;
+  line-height: 1.05;
+  margin-bottom: 10px;
+}
+.hero-title .accent { color: var(--orange-deep); }
+.hero-subtitle-line1 {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 6px;
+  letter-spacing: -0.3px;
+}
+.hero-subtitle-line2 {
+  font-size: 15px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  max-width: 720px;
+}
+
+/* ========== Section ========== */
+.section {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 48px 24px;
+}
+h2 {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.5px;
+  margin-bottom: 18px;
+  padding-left: 14px;
+  position: relative;
+}
+h2::before {
+  content: "";
+  position: absolute;
+  left: 0; top: 6px; bottom: 6px;
+  width: 3px;
+  background: var(--orange-deep);
+  border-radius: 2px;
+}
+h2 .h2-num {
+  font-family: 'SF Mono', 'Consolas', monospace;
+  color: var(--text-tertiary);
+  font-weight: 700;
+  margin-right: 10px;
+  font-size: 18px;
+}
+
+/* ========== Stats Grid ========== */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 28px;
+}
+.stat-card {
+  padding: 20px 18px;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+}
+.stat-label {
+  font-family: 'SF Mono', 'Consolas', monospace;
+  font-size: 11px;
+  color: var(--text-tertiary);
+  letter-spacing: 0.8px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+.stat-value {
+  font-size: 28px;
+  font-weight: 900;
+  color: var(--text-primary);
+  letter-spacing: -1px;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+.stat-value .accent { color: var(--orange-deep); }
+.stat-desc {
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+/* ========== Archive Cards ========== */
+.archive-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 14px;
+}
+.archive-card {
+  padding: 18px 20px;
+  background: var(--bg-white);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  color: inherit;
+  display: block;
+  position: relative;
+}
+.archive-card:hover {
+  border-color: var(--orange-deep);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(243,111,33,0.08);
+}
+.archive-card.latest::after {
+  content: "LATEST";
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: var(--orange-deep);
+  color: #fff;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  padding: 2px 7px;
+  border-radius: 2px;
+  font-family: 'SF Mono', monospace;
+}
+.archive-ww {
+  font-family: 'SF Mono', 'Consolas', monospace;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--orange-deep);
+  margin-bottom: 8px;
+  letter-spacing: 0.5px;
+}
+.archive-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 6px;
+  letter-spacing: -0.3px;
+  line-height: 1.4;
+}
+.archive-date {
+  font-family: 'SF Mono', 'Consolas', monospace;
+  font-size: 11px;
+  color: var(--text-tertiary);
+  margin-bottom: 10px;
+}
+.archive-highlights {
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+}
+.archive-highlights .label {
+  font-family: 'SF Mono', monospace;
+  font-size: 10px;
+  color: var(--text-tertiary);
+  letter-spacing: 0.5px;
+  font-weight: 700;
+  margin-bottom: 4px;
+  display: block;
+}
+
+/* ========== Quick Links ========== */
+.quick-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+.quick-card {
+  padding: 22px 20px;
+  background: var(--bg-white);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--text-primary);
+  border-radius: 0 6px 6px 0;
+  text-decoration: none;
+  color: inherit;
+  transition: all 0.2s ease;
+  display: block;
+}
+.quick-card:hover {
+  border-left-color: var(--orange-deep);
+  background: var(--bg-subtle);
+}
+.quick-icon {
+  font-size: 28px;
+  margin-bottom: 10px;
+}
+.quick-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+  letter-spacing: -0.3px;
+}
+.quick-desc {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+.quick-arrow {
+  margin-top: 12px;
+  font-family: 'SF Mono', monospace;
+  font-size: 11px;
+  color: var(--orange-deep);
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+/* ========== Trust Legend ========== */
+.legend-box {
+  padding: 18px 22px;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--text-primary);
+  border-radius: 0 6px 6px 0;
+  margin-top: 16px;
+}
+.legend-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+  letter-spacing: -0.2px;
+}
+.legend-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+.legend-row strong { font-weight: 700; margin-right: 4px; }
+.sig-ok { color: var(--signal-high); }
+.sig-mid { color: var(--signal-mid); }
+.sig-ng { color: var(--signal-low); }
+
+/* ========== Footer ========== */
+footer {
+  border-top: 1px solid var(--border);
+  padding: 32px 24px 40px 24px;
+  margin-top: 48px;
+  background: var(--bg-subtle);
+}
+.footer-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+.footer-logo img { height: 20px; opacity: 0.75; margin-bottom: 8px; }
+.footer-text {
+  font-size: 12px;
+  color: var(--text-tertiary);
+  line-height: 1.6;
+}
+.footer-contact {
+  font-family: 'SF Mono', monospace;
+  font-size: 12px;
+  color: var(--text-secondary);
+  text-align: right;
+  line-height: 1.7;
+}
+.footer-contact strong {
+  color: var(--text-primary);
+  font-size: 13px;
+  font-family: 'Noto Sans KR', sans-serif;
+  font-weight: 700;
+}
+
+/* ========== Responsive ========== */
+@media (max-width: 768px) {
+  .hero-title { font-size: 38px; letter-spacing: -1px; }
+  .stats-grid { grid-template-columns: repeat(2, 1fr); }
+  .quick-grid { grid-template-columns: 1fr; }
+  .top-bar-inner { padding: 12px 16px; }
+  .hero, .section { padding-left: 16px; padding-right: 16px; }
+}
+</style>
+</head>
+<body>
+
+<!-- m-SIGNAL Unified Top Nav -->
+<nav class="msig-topnav">
+  <div class="msig-topnav-inner">
+    <a href="index.html" class="msig-topnav-logo">
+      <img src="assets/logo.png" alt="SK hynix"/>
+      <span class="name">m-<span class="ac">SIGNAL</span></span>
+    </a>
+    <div class="msig-topnav-menu">
+      <a href="crawler/index.html" class="msig-topnav-link">크롤링</a>
+      <a href="overview.html" class="msig-topnav-link">OVERVIEW</a>
+      <a href="index.html" class="msig-topnav-link active">보고서</a>
+      <a href="trend.html" class="msig-topnav-link">누적관리 <span class="msig-soon">SOON</span></a>
+    </div>
+    <div class="msig-topnav-meta">
+      <span class="tag">INTERNAL</span>
+      <span class="ver">v2.1.1 · Gemini Ready · 이정훈 TL</span>
+    </div>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-tag">
+    <span class="ww">SYSTEM</span>
+    <span>Materials Strategy · SK hynix</span>
+  </div>
+  <div class="hero-title">m<span class="accent">-SIGNAL</span></div>
+  <div class="hero-subtitle-line1">Materials Signal Intelligence</div>
+  <div class="hero-subtitle-line2">
+    소재 시장 동향 · 기술 변곡점 · BP 활동을 자동 수집 · 분석 · 보고서화하는 소재전략팀 전용 인텔리전스 시스템. 400+ 외부 소스에서 AI 필터링된 핵심 Signal을 주간 구조화 보고서로 제공합니다.
+  </div>
+</section>
+
+<!-- Stats -->
+<section class="section">
+  <h2><span class="h2-num">01</span>현황</h2>
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-label">EXTERNAL SOURCES</div>
+      <div class="stat-value">400<span class="accent">+</span></div>
+      <div class="stat-desc">한 · 영 · 일 · 중 4개국 언론 · arXiv · 정부 · 학회</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">BP WATCH</div>
+      <div class="stat-value">8<span class="accent">군</span></div>
+      <div class="stat-desc">Photo · Chemical · Slurry · Pad · Gas · Precursor · Wafer · Target</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">REPORTS ISSUED</div>
+      <div class="stat-value"><span class="accent">1</span></div>
+      <div class="stat-desc">WW17 발행 · 매주 금 10:00 KST 정기 배포</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">TIERS</div>
+      <div class="stat-value"><span class="accent">5</span></div>
+      <div class="stat-desc">산업 거시 → 소재 시장 → BP → 자사 → 학술</div>
+    </div>
+  </div>
+</section>
+
+<!-- Quick Links -->
+<section class="section">
+  <h2><span class="h2-num">02</span>바로 가기</h2>
+  <div class="quick-grid" style="grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px">
+    <a href="crawler/index.html" class="quick-card">
+      <div class="quick-icon">🛰️</div>
+      <div class="quick-title">크롤링</div>
+      <div class="quick-desc">400+ 외부 소스에서 Signal 자동 수집 · LLM 필터링 · Bundle 생성</div>
+      <div class="quick-arrow">RUN →</div>
+    </a>
+    <a href="overview.html" class="quick-card">
+      <div class="quick-icon">🗺️</div>
+      <div class="quick-title">OVERVIEW</div>
+      <div class="quick-desc">시스템 구조 · 데이터 파이프라인 · 5 Tier 구조 · 사용법 5분 가이드</div>
+      <div class="quick-arrow">LEARN →</div>
+    </a>
+    <a href="weekly/WW17.html" class="quick-card">
+      <div class="quick-icon">📊</div>
+      <div class="quick-title">최신 Weekly</div>
+      <div class="quick-desc">WW17 · 2026-04-17 ~ 04-24 · 5대 핵심 Signal + Tier별 종합 분석</div>
+      <div class="quick-arrow">READ →</div>
+    </a>
+    <a href="trend.html" class="quick-card" style="opacity:0.7">
+      <div class="quick-icon">📈</div>
+      <div class="quick-title">누적관리 <span class="msig-soon">SOON</span></div>
+      <div class="quick-desc">BP·소재군·키워드 누적 트렌드 · 신뢰도 추이 · 워드클라우드 (Phase 2)</div>
+      <div class="quick-arrow">PREVIEW →</div>
+    </a>
+    <a href="crawler/index.html" class="quick-card">
+      <div class="quick-icon">🤖</div>
+      <div class="quick-title">LLM 설정</div>
+      <div class="quick-desc">Gemini/Claude API Key 설정 · 자동 번역 · 직접 보고서 생성 테스트</div>
+      <div class="quick-arrow">SETUP →</div>
+    </a>
+  </div>
+</section>
+
+<!-- Archive -->
+<section class="section" id="archive">
+  <h2><span class="h2-num">03</span>Weekly Archive</h2>
+  <div class="archive-grid">
+    <a href="weekly/WW17.html" class="archive-card latest">
+      <div class="archive-ww">WW17 · 2026</div>
+      <div class="archive-title">HBM4E 로드맵 · 청주 P&amp;T7 · SOCAMM2 · PR 공급망 3중 충격</div>
+      <div class="archive-date">2026-04-17 ~ 04-24</div>
+      <div class="archive-highlights">
+        <span class="label">KEY SIGNALS · 5</span>
+        HBM4E 2027 양산 · P&amp;T7 19조 착공 · SOCAMM2 양산 개시 · Naphtha 수급 차질 · Fujifilm 불소 무함유 ArF 레지스트
+      </div>
+    </a>
+    <!-- WW18부터는 발행 시 여기에 추가 -->
+  </div>
+  <div class="legend-box">
+    <div class="legend-title">💡 아카이브 읽기 팁</div>
+    <div class="legend-row">
+      <span><strong>인용 [번호]</strong>는 참고문헌과 연결 · 클릭 시 원문 이동</span>
+    </div>
+    <div class="legend-row" style="margin-top:6px;">
+      <span><span class="sig-ok">●</span> <strong class="sig-ok">공식</strong> 기업 IR · 보도자료</span>
+      <span><span class="sig-mid">◐</span> <strong class="sig-mid">업계</strong> 다수 보도</span>
+      <span><span class="sig-ng">○</span> <strong class="sig-ng">추정</strong> 단일 소스</span>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <div class="footer-inner">
+    <div>
+      <div class="footer-logo">
+        <img src="assets/logo.png" alt="SK hynix"/>
+      </div>
+      <div class="footer-text">
+        m-SIGNAL v2.1.1 · Materials Signal Intelligence<br>
+        SK hynix 소재전략 · 내부용 · 무단 외부 공유 금지
+      </div>
+    </div>
+    <div class="footer-contact">
+      <strong>이정훈 TL</strong><br>
+      010-3376-7923<br>
+      junghoon12.lee@sk.com
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
